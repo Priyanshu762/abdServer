@@ -1,0 +1,23 @@
+{
+  "name": "affordable-balloon-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Node.js Express backend with MongoDB and Cloudinary for Affordable Balloon Decoration",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "seed": "node seeder/initialSeed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^2.5.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.2",
+    "multer": "^1.4.5-lts.1"
+  }
+}
