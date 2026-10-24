@@ -259,13 +259,13 @@ const initialGalleryItems = [
 export async function runAutoSeed(force = false) {
   try {
     // 1. Seed or Update Default Admin User
-    const adminEmail = process.env.ADMIN_EMAIL || "admin@affordableballoons.com";
+    const adminEmail = "admin@affordableballoons.com";
     const existingAdmin = await User.findOne({ email: adminEmail });
     if (!existingAdmin) {
       await User.create({
-        name: process.env.ADMIN_NAME || "Admin",
+        name: "Admin",
         email: adminEmail,
-        password: process.env.ADMIN_PASSWORD || "Admin@12345",
+        password: "Admin@12345",
         role: "admin",
       });
       console.log(`[Seed] Initial Admin created: ${adminEmail}`);
