@@ -23,13 +23,21 @@ const PORT = process.env.PORT || 5000;
 connectDB();
 
 // CORS configuration (allow requests from Next.js frontend)
-const allowedOrigins = [
-  process.env.CLIENT_URL || "http://localhost:3000",
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "http://localhost:3001",
-  "http://127.0.0.1:3001",
-];
+const configuredClientUrls = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(",").map((url) => url.trim().replace(/\/+$/, ""))
+  : [];
+
+const allowedOrigins = Array.from(
+  new Set([
+    ...configuredClientUrls,
+    "https://www.affordableballoondecoration.com",
+    "https://affordableballoondecoration.com",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3001",
+  ])
+);
 
 app.use(
   cors({
@@ -37,7 +45,7 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(null, true); // Allow during development
+        callback(null, true); // Allow during development / custom subdomains
       }
     },
     credentials: true,
