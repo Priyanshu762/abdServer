@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 import { connectDB } from "./config/db.js";
 import { protect } from "./middleware/auth.js";
 import { upload } from "./middleware/upload.js";
@@ -55,14 +56,28 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// Health Check
-app.get("/api/health", (req, res) => {
-  res.status(200).json({
+// Health Check Endpoints (Supports /, /health, /healthz, /api, and /api/health for all cloud probes)
+const getHealthStatus = () => {
+  const states = ["disconnected", "connected", "connecting", "disconnecting"];
+  const dbState = states[mongoose.connection.readyState] || "unknown";
+  return {
     status: "ok",
+    uptime: Math.floor(process.uptime()),
     timestamp: new Date().toISOString(),
     service: "Affordable Balloon Decoration Backend",
-  });
-});
+    database: dbState,
+  };
+};
+
+const handleHealthCheck = (_req, res) => {
+  res.status(200).json(getHealthStatus());
+};
+
+app.get("/", handleHealthCheck);
+app.get("/health", handleHealthCheck);
+app.get("/healthz", handleHealthCheck);
+app.get("/api", handleHealthCheck);
+app.get("/api/health", handleHealthCheck);
 
 // Authentication Routes
 app.post("/api/auth/login", authController.login);
@@ -120,8 +135,10 @@ app.use((err, req, res, _next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`[Server] Affordable Balloon Backend running in ${process.env.NODE_ENV || "development"} mode on port ${PORT}`);
+const HOST = process.env.HOST || "0.0.0.0";
+
+app.listen(PORT, HOST, () => {
+  console.log(`[Server] Affordable Balloon Backend running in ${process.env.NODE_ENV || "development"} mode on http://${HOST}:${PORT}`);
 });
 
 export default app;
